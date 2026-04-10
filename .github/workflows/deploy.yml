@@ -1,12 +1,8 @@
-# Publishes the Vite build to GitHub Pages (official Actions flow — no gh-pages branch).
-# Repo Settings → Pages → Build and deployment → Source: GitHub Actions
-
 name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [main]
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,29 +14,36 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  generate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install Python dependencies
-        run: pip install -r scripts/requirements.txt
-      - name: Generate predictions and train models
-        run: python scripts/generate_predictions.py
+      - run: pip install -r scripts/requirements.txt
+      - run: python scripts/generate_predictions.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prediction-data
+          path: frontend/public/data/
 
+  build:
+    needs: generate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: prediction-data
+          path: frontend/public/data/
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Install and build frontend
-        run: cd frontend && npm install && npm run build
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      - run: cd frontend && npm install && npm run build
+      - uses: actions/upload-pages-artifact@v3
         with:
-          path: frontend/dist
+          path: frontend/dist/
 
   deploy:
     needs: build
@@ -49,6 +52,5 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
+      - uses: actions/deploy-pages@v4
         id: deployment
-        uses: actions/deploy-pages@v4
