@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+scripts/models/*.joblib
+
+# Node / Vite
+frontend/node_modules/
+frontend/dist/
+
+# OS
+.DS_Store
