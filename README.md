@@ -61,10 +61,12 @@ Re-run `generate_predictions.py`, commit the updated JSON if you want it version
 
 Workflow: `.github/workflows/deploy.yml`
 
-1. **generate** — Python installs dependencies, runs `python scripts/generate_predictions.py`, uploads `frontend/public/data/` as an artifact.
-2. **build-and-deploy** — Downloads that artifact into `frontend/public/data/`, runs `npm install` and `npm run build` in `frontend/`, then publishes **`frontend/dist/`** to the **`gh-pages`** branch with [peaceiris/actions-gh-pages](https://github.com/peaceiris/actions-gh-pages).
+1. **build** — Runs `python scripts/generate_predictions.py` (writes JSON under `frontend/public/data/`), then `npm install` and `npm run build` in `frontend/`.
+2. **deploy** — Publishes **`frontend/dist/`** with GitHub’s official [Pages deployment](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site#publishing-with-a-custom-github-actions-workflow) (`upload-pages-artifact` + `deploy-pages`). No **`gh-pages`** branch.
 
-The Vite `base` path is set to `/f1_race_predictor/` to match GitHub Pages project-site URLs.
+**One-time repo setting:** **Settings → Pages → Build and deployment → Source:** choose **GitHub Actions** (not “Deploy from a branch”). If Source is still **main** / **root**, GitHub will show your **README** instead of the app at [https://chaarvigoel.github.io/f1_race_predictor/](https://chaarvigoel.github.io/f1_race_predictor/).
+
+The Vite `base` path is `/f1_race_predictor/` so asset URLs match the project site path.
 
 ## Repository layout
 
