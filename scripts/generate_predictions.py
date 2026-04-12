@@ -142,8 +142,6 @@ def main() -> int:
 
     for _, r in races.iterrows():
         sk = int(r["session_key"])
-        rec = _session_record(r)
-        session_rows.append(rec)
         frame = frames_by_session.get(sk)
         if frame is None:
             failed_pred += 1
@@ -158,6 +156,7 @@ def main() -> int:
             failed_pred += 1
             continue
         predictions_out[str(sk)] = ranked
+        session_rows.append(_session_record(r))
         processed += 1
 
     if not predictions_out:
