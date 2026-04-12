@@ -193,7 +193,7 @@ def predict_session(
     if artifacts is None:
         artifacts = load_artifacts()
 
-    raw = build_session_feature_frame(
+    raw, _empty_reason = build_session_feature_frame(
         race_session_key=session_key,
         qual_session_key=qual_session_key,
         year=year,

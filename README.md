@@ -10,7 +10,7 @@ Static web app that ranks every driver’s estimated **podium probability** for 
 2. Models are trained on **2023** races and evaluated on **2024** (classification report + ROC-AUC printed in the logs).
 3. **XGBoost** probabilities are written to `frontend/public/data/predictions.json`, with `sessions.json` listing every race (sorted by date ascending). The React app loads both files at runtime.
 
-**Rate limits:** OpenF1’s free tier is about **3 requests/second** and **30/minute**. The fetcher inserts **`time.sleep(0.4)`** between sequential requests. A full refresh touches many endpoints per driver, so a complete rebuild can take a while.
+**Rate limits:** The free tier is roughly **~30 requests/minute** (burst limits also apply). The fetcher defaults to **`2.0` seconds** between requests (`OPENF1_REQUEST_GAP_S`) and **retries on 429 / 5xx** so long runs don’t silently get empty JSON. Faster pacing (e.g. `0.4s`) often triggers **HTTP 429** → empty `drivers` lists. Override: `export OPENF1_REQUEST_GAP_S=0.4` at your own risk. Full rebuilds take **much longer** with safe pacing.
 
 **Data floor:** OpenF1 coverage starts in **2023**; there is no supported path to earlier seasons in this pipeline.
 
@@ -43,6 +43,17 @@ python generate_predictions.py
 
 This writes `frontend/public/data/sessions.json`, `frontend/public/data/predictions.json`, and model binaries under `scripts/models/`.
 
+**Faster local test runs (scaled pipeline):** Training still needs both **2023** (train) and **2024** (holdout) in the loop.
+
+```bash
+export F1_MAX_RACES_PER_YEAR=2   # e.g. 2 earliest races per year → ~4 races, far fewer API calls
+export OPENF1_REQUEST_GAP_S=1    # optional; smaller gap OK only with a tiny race cap (429 risk)
+python scripts/generate_predictions.py
+```
+
+- `F1_YEARS` — optional, default `2023,2024` (comma-separated). Using only one year will fail the train/test split unless you change the script.
+- `F1_MAX_RACES_PER_YEAR` — unset for full seasons.
+
 ### Frontend
 
 ```bash
@@ -51,7 +62,7 @@ npm install
 npm run dev
 ```
 
-Open the URL Vite prints (usually `http://localhost:5173/f1_race_predictor/`). Without the JSON files, the app shows the **error state** until you run the generator.
+Open the URL Vite prints (with the current Vite config this is usually `http://localhost:5173/` — dev uses base `/` so `public/data/*.json` is loaded from `/data/...`). Without the JSON files, the app shows the **error state** until you run the generator.
 
 ### Retraining / refreshing predictions
 

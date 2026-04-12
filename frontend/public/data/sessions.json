@@ -1,0 +1,356 @@
+[
+  {
+    "session_key": 7953,
+    "race_name": "Bahrain Grand Prix",
+    "year": 2023,
+    "date": "2023-03-05"
+  },
+  {
+    "session_key": 7779,
+    "race_name": "Saudi Arabia Grand Prix",
+    "year": 2023,
+    "date": "2023-03-19"
+  },
+  {
+    "session_key": 7787,
+    "race_name": "Australia Grand Prix",
+    "year": 2023,
+    "date": "2023-04-02"
+  },
+  {
+    "session_key": 9069,
+    "race_name": "Azerbaijan Grand Prix",
+    "year": 2023,
+    "date": "2023-04-29"
+  },
+  {
+    "session_key": 9070,
+    "race_name": "Azerbaijan Grand Prix",
+    "year": 2023,
+    "date": "2023-04-30"
+  },
+  {
+    "session_key": 9078,
+    "race_name": "United States Grand Prix",
+    "year": 2023,
+    "date": "2023-05-07"
+  },
+  {
+    "session_key": 9086,
+    "race_name": "Italy Grand Prix",
+    "year": 2023,
+    "date": "2023-05-21"
+  },
+  {
+    "session_key": 9094,
+    "race_name": "Monaco Grand Prix",
+    "year": 2023,
+    "date": "2023-05-28"
+  },
+  {
+    "session_key": 9102,
+    "race_name": "Spain Grand Prix",
+    "year": 2023,
+    "date": "2023-06-04"
+  },
+  {
+    "session_key": 9110,
+    "race_name": "Canada Grand Prix",
+    "year": 2023,
+    "date": "2023-06-18"
+  },
+  {
+    "session_key": 9117,
+    "race_name": "Austria Grand Prix",
+    "year": 2023,
+    "date": "2023-07-01"
+  },
+  {
+    "session_key": 9118,
+    "race_name": "Austria Grand Prix",
+    "year": 2023,
+    "date": "2023-07-02"
+  },
+  {
+    "session_key": 9126,
+    "race_name": "United Kingdom Grand Prix",
+    "year": 2023,
+    "date": "2023-07-09"
+  },
+  {
+    "session_key": 9133,
+    "race_name": "Hungary Grand Prix",
+    "year": 2023,
+    "date": "2023-07-23"
+  },
+  {
+    "session_key": 9140,
+    "race_name": "Belgium Grand Prix",
+    "year": 2023,
+    "date": "2023-07-29"
+  },
+  {
+    "session_key": 9141,
+    "race_name": "Belgium Grand Prix",
+    "year": 2023,
+    "date": "2023-07-30"
+  },
+  {
+    "session_key": 9149,
+    "race_name": "Netherlands Grand Prix",
+    "year": 2023,
+    "date": "2023-08-27"
+  },
+  {
+    "session_key": 9157,
+    "race_name": "Italy Grand Prix",
+    "year": 2023,
+    "date": "2023-09-03"
+  },
+  {
+    "session_key": 9165,
+    "race_name": "Singapore Grand Prix",
+    "year": 2023,
+    "date": "2023-09-17"
+  },
+  {
+    "session_key": 9173,
+    "race_name": "Japan Grand Prix",
+    "year": 2023,
+    "date": "2023-09-24"
+  },
+  {
+    "session_key": 9220,
+    "race_name": "Qatar Grand Prix",
+    "year": 2023,
+    "date": "2023-10-07"
+  },
+  {
+    "session_key": 9221,
+    "race_name": "Qatar Grand Prix",
+    "year": 2023,
+    "date": "2023-10-08"
+  },
+  {
+    "session_key": 9212,
+    "race_name": "United States Grand Prix",
+    "year": 2023,
+    "date": "2023-10-21"
+  },
+  {
+    "session_key": 9213,
+    "race_name": "United States Grand Prix",
+    "year": 2023,
+    "date": "2023-10-22"
+  },
+  {
+    "session_key": 9181,
+    "race_name": "Mexico Grand Prix",
+    "year": 2023,
+    "date": "2023-10-29"
+  },
+  {
+    "session_key": 9204,
+    "race_name": "Brazil Grand Prix",
+    "year": 2023,
+    "date": "2023-11-04"
+  },
+  {
+    "session_key": 9205,
+    "race_name": "Brazil Grand Prix",
+    "year": 2023,
+    "date": "2023-11-05"
+  },
+  {
+    "session_key": 9189,
+    "race_name": "United States Grand Prix",
+    "year": 2023,
+    "date": "2023-11-19"
+  },
+  {
+    "session_key": 9197,
+    "race_name": "United Arab Emirates Grand Prix",
+    "year": 2023,
+    "date": "2023-11-26"
+  },
+  {
+    "session_key": 9472,
+    "race_name": "Bahrain Grand Prix",
+    "year": 2024,
+    "date": "2024-03-02"
+  },
+  {
+    "session_key": 9480,
+    "race_name": "Saudi Arabia Grand Prix",
+    "year": 2024,
+    "date": "2024-03-09"
+  },
+  {
+    "session_key": 9488,
+    "race_name": "Australia Grand Prix",
+    "year": 2024,
+    "date": "2024-03-24"
+  },
+  {
+    "session_key": 9496,
+    "race_name": "Japan Grand Prix",
+    "year": 2024,
+    "date": "2024-04-07"
+  },
+  {
+    "session_key": 9672,
+    "race_name": "China Grand Prix",
+    "year": 2024,
+    "date": "2024-04-20"
+  },
+  {
+    "session_key": 9673,
+    "race_name": "China Grand Prix",
+    "year": 2024,
+    "date": "2024-04-21"
+  },
+  {
+    "session_key": 9506,
+    "race_name": "United States Grand Prix",
+    "year": 2024,
+    "date": "2024-05-04"
+  },
+  {
+    "session_key": 9507,
+    "race_name": "United States Grand Prix",
+    "year": 2024,
+    "date": "2024-05-05"
+  },
+  {
+    "session_key": 9515,
+    "race_name": "Italy Grand Prix",
+    "year": 2024,
+    "date": "2024-05-19"
+  },
+  {
+    "session_key": 9523,
+    "race_name": "Monaco Grand Prix",
+    "year": 2024,
+    "date": "2024-05-26"
+  },
+  {
+    "session_key": 9531,
+    "race_name": "Canada Grand Prix",
+    "year": 2024,
+    "date": "2024-06-09"
+  },
+  {
+    "session_key": 9539,
+    "race_name": "Spain Grand Prix",
+    "year": 2024,
+    "date": "2024-06-23"
+  },
+  {
+    "session_key": 9549,
+    "race_name": "Austria Grand Prix",
+    "year": 2024,
+    "date": "2024-06-29"
+  },
+  {
+    "session_key": 9550,
+    "race_name": "Austria Grand Prix",
+    "year": 2024,
+    "date": "2024-06-30"
+  },
+  {
+    "session_key": 9558,
+    "race_name": "United Kingdom Grand Prix",
+    "year": 2024,
+    "date": "2024-07-07"
+  },
+  {
+    "session_key": 9566,
+    "race_name": "Hungary Grand Prix",
+    "year": 2024,
+    "date": "2024-07-21"
+  },
+  {
+    "session_key": 9574,
+    "race_name": "Belgium Grand Prix",
+    "year": 2024,
+    "date": "2024-07-28"
+  },
+  {
+    "session_key": 9582,
+    "race_name": "Netherlands Grand Prix",
+    "year": 2024,
+    "date": "2024-08-25"
+  },
+  {
+    "session_key": 9590,
+    "race_name": "Italy Grand Prix",
+    "year": 2024,
+    "date": "2024-09-01"
+  },
+  {
+    "session_key": 9598,
+    "race_name": "Azerbaijan Grand Prix",
+    "year": 2024,
+    "date": "2024-09-15"
+  },
+  {
+    "session_key": 9606,
+    "race_name": "Singapore Grand Prix",
+    "year": 2024,
+    "date": "2024-09-22"
+  },
+  {
+    "session_key": 9616,
+    "race_name": "United States Grand Prix",
+    "year": 2024,
+    "date": "2024-10-19"
+  },
+  {
+    "session_key": 9617,
+    "race_name": "United States Grand Prix",
+    "year": 2024,
+    "date": "2024-10-20"
+  },
+  {
+    "session_key": 9625,
+    "race_name": "Mexico Grand Prix",
+    "year": 2024,
+    "date": "2024-10-27"
+  },
+  {
+    "session_key": 9635,
+    "race_name": "Brazil Grand Prix",
+    "year": 2024,
+    "date": "2024-11-02"
+  },
+  {
+    "session_key": 9636,
+    "race_name": "Brazil Grand Prix",
+    "year": 2024,
+    "date": "2024-11-03"
+  },
+  {
+    "session_key": 9644,
+    "race_name": "United States Grand Prix",
+    "year": 2024,
+    "date": "2024-11-24"
+  },
+  {
+    "session_key": 9654,
+    "race_name": "Qatar Grand Prix",
+    "year": 2024,
+    "date": "2024-11-30"
+  },
+  {
+    "session_key": 9655,
+    "race_name": "Qatar Grand Prix",
+    "year": 2024,
+    "date": "2024-12-01"
+  },
+  {
+    "session_key": 9662,
+    "race_name": "United Arab Emirates Grand Prix",
+    "year": 2024,
+    "date": "2024-12-08"
+  }
+]

@@ -31,7 +31,10 @@ def _parse_dt(series: pd.Series) -> pd.Series:
 
 def _race_display_name(row: pd.Series) -> str:
     country = row.get("country_name")
+    circuit = row.get("circuit_short_name")
     if pd.notna(country) and str(country).strip():
+        if pd.notna(circuit) and str(circuit).strip():
+            return f"{country} — {circuit}"
         return f"{country} Grand Prix"
     loc = row.get("location")
     if pd.notna(loc) and str(loc).strip():
@@ -42,8 +45,21 @@ def _race_display_name(row: pd.Series) -> str:
 def attach_qual_session_keys(races: pd.DataFrame, quals: pd.DataFrame) -> pd.DataFrame:
     if races.empty or quals.empty:
         return races.assign(qual_session_key=pd.NA)
-    q = quals[["meeting_key", "session_key"]].rename(columns={"session_key": "qual_session_key"})
+    q = quals.copy()
+    # One row per meeting: main "Qualifying" only (not Sprint Qualifying, which is another session_type).
+    if "session_type" in q.columns:
+        q = q[q["session_type"] == "Qualifying"]
+    if q.empty:
+        return races.assign(qual_session_key=pd.NA)
+    sort_cols = ["date_start"] if "date_start" in q.columns else []
+    if sort_cols:
+        q = q.sort_values(sort_cols)
+    q = q[["meeting_key", "session_key"]].rename(columns={"session_key": "qual_session_key"})
+    # Sprint weekends can surface multiple qualifying-like rows; keep last by time (usually GP grid qual).
+    q = q.drop_duplicates(subset=["meeting_key"], keep="last")
     merged = races.merge(q, on="meeting_key", how="left")
+    # If anything still duplicates race session_key, keep one row per race.
+    merged = merged.drop_duplicates(subset=["session_key"], keep="first")
     return merged
 
 
@@ -163,10 +179,20 @@ def build_session_feature_frame(
     qual_session_key: int | None,
     year: int,
     include_target: bool,
-) -> pd.DataFrame:
+) -> tuple[pd.DataFrame, str]:
+    """Returns (feature_frame, empty_reason). empty_reason is \"\" when the frame has rows."""
     drivers_df = fetch_drivers(race_session_key)
-    if drivers_df.empty or "driver_number" not in drivers_df.columns:
-        return pd.DataFrame()
+    if drivers_df.empty:
+        return (
+            pd.DataFrame(),
+            "drivers API returned no rows — often a cancelled/unrun weekend (OpenF1 keeps the session stub) "
+            "or an OpenF1 data gap; otherwise check rate limits / network.",
+        )
+    if "driver_number" not in drivers_df.columns:
+        return (
+            pd.DataFrame(),
+            f"drivers response missing driver_number; columns={list(drivers_df.columns)}",
+        )
 
     pit_df = fetch_pit(race_session_key)
     race_pos_df = fetch_position(race_session_key)
@@ -249,4 +275,6 @@ def build_session_feature_frame(
             row["podium"] = int(fin is not None and fin <= 3) if fin is not None else np.nan
         rows.append(pd.DataFrame([row]))
 
-    return pd.concat(rows, ignore_index=True) if rows else pd.DataFrame()
+    if not rows:
+        return pd.DataFrame(), "internal: no driver rows after loop (unexpected)."
+    return pd.concat(rows, ignore_index=True), ""

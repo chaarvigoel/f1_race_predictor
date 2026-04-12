@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import json
+import math
+import os
 import sys
+import traceback
 from pathlib import Path
 
 import pandas as pd
@@ -14,6 +17,36 @@ from model import rank_precomputed_frame, train_models
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = REPO_ROOT / "frontend" / "public" / "data"
+
+
+def _json_sanitize(obj):
+    """Ensure output is valid for JavaScript JSON.parse (no NaN/Infinity)."""
+    if isinstance(obj, dict):
+        return {k: _json_sanitize(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_json_sanitize(v) for v in obj]
+    if isinstance(obj, float):
+        if math.isnan(obj) or math.isinf(obj):
+            return None
+        return obj
+    if obj is None or isinstance(obj, (str, bool, int)):
+        return obj
+    if hasattr(obj, "item"):  # numpy scalar
+        return _json_sanitize(obj.item())
+    return obj
+
+
+def _write_json(path: Path, data) -> None:
+    path.write_text(
+        json.dumps(_json_sanitize(data), indent=2, allow_nan=False),
+        encoding="utf-8",
+    )
+
+
+def _parse_years() -> list[int]:
+    raw = os.environ.get("F1_YEARS", "2023,2024").strip()
+    parts = [int(x.strip()) for x in raw.split(",") if x.strip()]
+    return parts if parts else [2023, 2024]
 
 
 def _session_record(row: pd.Series) -> dict:
@@ -33,7 +66,7 @@ def _session_record(row: pd.Series) -> dict:
 
 
 def main() -> int:
-    years = [2023, 2024]
+    years = _parse_years()
     races, quals = fetch_race_and_qual_sessions(years)
     if races.empty:
         print("No race sessions returned; aborting.")
@@ -42,8 +75,19 @@ def main() -> int:
     races = races.sort_values("date_start").reset_index(drop=True)
     races = attach_qual_session_keys(races, quals)
 
-    train_mask = races["year"] == 2023
-    test_mask = races["year"] == 2024
+    cap_raw = os.environ.get("F1_MAX_RACES_PER_YEAR", "").strip()
+    if cap_raw:
+        n = int(cap_raw)
+        chunks: list[pd.DataFrame] = []
+        for y in years:
+            ry = races[races["year"] == y].sort_values("date_start").head(n)
+            if not ry.empty:
+                chunks.append(ry)
+        races = pd.concat(chunks, ignore_index=True) if chunks else races
+        print(
+            f"Scaled run: F1_MAX_RACES_PER_YEAR={n} → {len(races)} race session(s) "
+            f"(set unset for full seasons)."
+        )
 
     train_parts: list[pd.DataFrame] = []
     test_parts: list[pd.DataFrame] = []
@@ -56,12 +100,24 @@ def main() -> int:
         qk = r.get("qual_session_key")
         qual_key = int(qk) if pd.notna(qk) else None
         try:
-            frame = build_session_feature_frame(sk, qual_key, year, include_target=True)
+            frame, empty_reason = build_session_feature_frame(sk, qual_key, year, include_target=True)
         except Exception as e:
-            print(f"Feature build failed session_key={sk}: {e}")
+            mk = r.get("meeting_key", "?")
+            name = _race_display_name(r)
+            print(
+                f"Feature build EXCEPTION session_key={sk} year={year} meeting_key={mk} "
+                f"qual_session_key={qual_key} race={name!r}: {e!r}"
+            )
+            traceback.print_exc()
             failed_build += 1
             continue
         if frame.empty:
+            mk = r.get("meeting_key", "?")
+            name = _race_display_name(r)
+            print(
+                f"Feature build EMPTY session_key={sk} year={year} meeting_key={mk} "
+                f"qual_session_key={qual_key} race={name!r} — {empty_reason}"
+            )
             failed_build += 1
             continue
         frames_by_session[sk] = frame
@@ -104,15 +160,18 @@ def main() -> int:
         predictions_out[str(sk)] = ranked
         processed += 1
 
+    if not predictions_out:
+        print(
+            "ERROR: predictions.json would be empty (every session failed feature build or ranking). "
+            "See feature build / prediction errors above."
+        )
+        return 1
+
     session_rows.sort(key=lambda x: x.get("date") or "")
 
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    (DATA_DIR / "sessions.json").write_text(
-        json.dumps(session_rows, indent=2), encoding="utf-8"
-    )
-    (DATA_DIR / "predictions.json").write_text(
-        json.dumps(predictions_out, indent=2), encoding="utf-8"
-    )
+    _write_json(DATA_DIR / "sessions.json", session_rows)
+    _write_json(DATA_DIR / "predictions.json", predictions_out)
 
     print("\n=== Summary ===")
     print(f"Sessions listed: {len(session_rows)}")

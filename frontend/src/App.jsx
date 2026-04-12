@@ -2,6 +2,26 @@ import { useEffect, useMemo, useState } from 'react';
 import RaceSelector from './components/RaceSelector.jsx';
 import PodiumCard from './components/PodiumCard.jsx';
 
+/** predictions.json keys are strings; normalize lookup in case of type drift. */
+function getPredictionsForSession(predictions, sessionKey) {
+  if (sessionKey == null || sessionKey === '') return null;
+  const k = String(sessionKey);
+  let list = predictions[k];
+  if (Array.isArray(list) && list.length > 0) return list;
+  const n = Number(k);
+  if (!Number.isNaN(n)) {
+    list = predictions[String(n)];
+    if (Array.isArray(list) && list.length > 0) return list;
+  }
+  for (const key of Object.keys(predictions)) {
+    if (key === k || Number(key) === n) {
+      const v = predictions[key];
+      if (Array.isArray(v) && v.length > 0) return v;
+    }
+  }
+  return null;
+}
+
 function sortSessionsNewestFirst(list) {
   return [...list].sort((a, b) => {
     const da = a.date || '';
@@ -15,7 +35,9 @@ export default function App() {
   const [error, setError] = useState(null);
   const [sessions, setSessions] = useState([]);
   const [predictions, setPredictions] = useState({});
+  /** String session_key — matches JSON object keys and <option value>. */
   const [selectedKey, setSelectedKey] = useState(null);
+  const [hasPredictionKeys, setHasPredictionKeys] = useState(true);
 
   const sortedSessions = useMemo(
     () => sortSessionsNewestFirst(sessions),
@@ -64,6 +86,7 @@ export default function App() {
         if (!cancelled) {
           setSessions(sessionsRaw);
           setPredictions(predictionsRaw);
+          setHasPredictionKeys(Object.keys(predictionsRaw).length > 0);
         }
       } catch (e) {
         if (!cancelled) {
@@ -83,15 +106,16 @@ export default function App() {
   useEffect(() => {
     if (sortedSessions.length === 0) return;
     setSelectedKey((prev) => {
-      if (prev != null && sortedSessions.some((s) => s.session_key === prev)) {
+      const first = String(sortedSessions[0].session_key);
+      if (prev != null && sortedSessions.some((s) => String(s.session_key) === prev)) {
         return prev;
       }
-      return sortedSessions[0].session_key;
+      return first;
     });
   }, [sortedSessions]);
 
   const selectedDrivers =
-    selectedKey != null ? predictions[String(selectedKey)] ?? null : null;
+    selectedKey != null ? getPredictionsForSession(predictions, selectedKey) : null;
 
   if (loading) {
     return (
@@ -168,7 +192,19 @@ export default function App() {
           <PodiumCard drivers={selectedDrivers} />
         ) : (
           <div className="rounded-xl border border-white/10 bg-white/5 p-8 text-center text-white/65">
-            No predictions available for this session.
+            {!hasPredictionKeys ? (
+              <>
+                <p className="font-medium text-white/80">No predictions in predictions.json</p>
+                <p className="mt-2 text-sm text-white/55">
+                  The build ran, but the generator did not write any race entries (check the CI log for
+                  the <span className="font-mono text-white/70">generate</span> job). Re-run{' '}
+                  <span className="font-mono text-white/70">python scripts/generate_predictions.py</span>{' '}
+                  locally and confirm the file is not empty.
+                </p>
+              </>
+            ) : (
+              <p>No predictions available for this session.</p>
+            )}
           </div>
         )}
       </main>
