@@ -95,39 +95,44 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-appbg">
-        <div className="flex flex-col items-center gap-4">
+      <div className="flex min-h-screen flex-col bg-appbg">
+        <div className="flex flex-1 flex-col items-center justify-center gap-4">
           <div
             className="h-12 w-12 animate-spin rounded-full border-2 border-white/20 border-t-f1red"
             aria-hidden
           />
           <p className="text-sm text-white/70">Loading race data…</p>
         </div>
+        <p className="pb-6 text-center text-xs text-white/35">by chaarvi</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-appbg px-4 py-16">
-        <div className="mx-auto max-w-lg rounded-xl border border-white/10 bg-white/5 p-8 text-center">
-          <h1 className="text-lg font-semibold text-f1red">Unable to load data</h1>
-          <p className="mt-3 text-sm leading-relaxed text-white/80">{error}</p>
+      <div className="flex min-h-screen flex-col bg-appbg">
+        <div className="flex flex-1 flex-col justify-center px-4 py-16">
+          <div className="mx-auto w-full max-w-lg rounded-xl border border-white/10 bg-white/5 p-8 text-center">
+            <h1 className="text-lg font-semibold text-f1red">Unable to load data</h1>
+            <p className="mt-3 text-sm leading-relaxed text-white/80">{error}</p>
+          </div>
         </div>
+        <p className="pb-6 text-center text-xs text-white/35">by chaarvi</p>
       </div>
     );
   }
 
   if (sortedSessions.length === 0) {
     return (
-      <div className="min-h-screen bg-appbg px-4 py-16 text-center text-white/70">
-        No races found in sessions.json.
+      <div className="flex min-h-screen flex-col bg-appbg px-4 py-16">
+        <p className="flex-1 text-center text-white/70">No races found in sessions.json.</p>
+        <p className="mt-8 text-center text-xs text-white/35">by chaarvi</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-appbg text-white">
+    <div className="flex min-h-screen flex-col bg-appbg text-white">
       <header className="border-b border-white/10 bg-black/40 px-4 py-6 sm:px-8">
         <div className="mx-auto max-w-4xl">
           <p className="text-xs font-medium uppercase tracking-widest text-f1red">
@@ -143,7 +148,7 @@ export default function App() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-4xl px-4 py-8 sm:px-8">
+      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-8">
         <div className="mb-8">
           <label
             htmlFor="race-select"
@@ -167,6 +172,12 @@ export default function App() {
           </div>
         )}
       </main>
+
+      <footer className="border-t border-white/5 px-4 py-4 sm:px-8">
+        <p className="mx-auto max-w-4xl rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 text-center text-xs text-white/45">
+          by chaarvi
+        </p>
+      </footer>
     </div>
   );
 }
