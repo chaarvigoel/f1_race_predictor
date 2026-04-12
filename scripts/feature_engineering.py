@@ -16,6 +16,15 @@ from data_fetcher import (
 SECTOR_COLS = ("duration_sector_1", "duration_sector_2", "duration_sector_3")
 
 
+def _laps_usable_for_sequence(laps_df: pd.DataFrame) -> bool:
+    """OpenF1 may return [] (empty frame, no columns) or rows missing lap_number."""
+    return (
+        not laps_df.empty
+        and "lap_number" in laps_df.columns
+        and "date_start" in laps_df.columns
+    )
+
+
 def _parse_dt(series: pd.Series) -> pd.Series:
     return pd.to_datetime(series, utc=True, errors="coerce")
 
@@ -54,7 +63,11 @@ def _grid_from_qual(
     if dpos.empty:
         return default
 
-    lap1 = qual_laps_driver[qual_laps_driver["lap_number"] == 1]
+    lap1 = pd.DataFrame()
+    if _laps_usable_for_sequence(qual_laps_driver):
+        lap1 = qual_laps_driver[
+            pd.to_numeric(qual_laps_driver["lap_number"], errors="coerce") == 1
+        ]
     if not lap1.empty:
         lap1 = lap1.iloc[0]
         start = _parse_dt(pd.Series([lap1.get("date_start")])).iloc[0]
@@ -92,9 +105,11 @@ def _count_laps_led(
     race_laps_driver: pd.DataFrame,
     race_pos_driver: pd.DataFrame,
 ) -> int:
-    if race_laps_driver.empty or race_pos_driver.empty:
+    if race_pos_driver.empty or not _laps_usable_for_sequence(race_laps_driver):
         return 0
-    laps = race_laps_driver.sort_values("lap_number").copy()
+    laps = race_laps_driver.copy()
+    laps["_lap_ord"] = pd.to_numeric(laps["lap_number"], errors="coerce")
+    laps = laps.sort_values("_lap_ord", na_position="last")
     laps["date_start"] = _parse_dt(laps["date_start"])
     laps["lap_duration"] = pd.to_numeric(laps["lap_duration"], errors="coerce")
     pos = race_pos_driver.copy()
