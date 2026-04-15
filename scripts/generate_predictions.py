@@ -72,6 +72,20 @@ def main() -> int:
         print("No race sessions returned; aborting.")
         return 1
 
+    # OpenF1 sets session_type="Race" for both Saturday Sprints and the Sunday Grand Prix;
+    # session_name is "Sprint" vs "Race". Keep only the main GP so each weekend is one row.
+    if "session_name" in races.columns:
+        before = len(races)
+        races = races[races["session_name"].astype(str).str.strip() == "Race"].reset_index(
+            drop=True
+        )
+        dropped = before - len(races)
+        if dropped:
+            print(
+                f"Excluded {dropped} sprint race session(s) "
+                "(same meeting_key as GP; session_name Sprint, not Sunday Race)."
+            )
+
     races = races.sort_values("date_start").reset_index(drop=True)
     races = attach_qual_session_keys(races, quals)
 
