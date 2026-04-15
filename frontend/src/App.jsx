@@ -35,7 +35,7 @@ export default function App() {
   const [error, setError] = useState(null);
   const [sessions, setSessions] = useState([]);
   const [predictions, setPredictions] = useState({});
-  /** String session_key — matches JSON object keys and <option value>. */
+  /** String session_key — matches JSON object keys and race picker values. */
   const [selectedKey, setSelectedKey] = useState(null);
   const [hasPredictionKeys, setHasPredictionKeys] = useState(true);
 
@@ -165,10 +165,7 @@ export default function App() {
           <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
             F1 Podium Predictor
           </h1>
-          <p className="mt-2 max-w-2xl text-sm text-white/65">
-            Pre-computed podium probabilities from qualifying pace, grid, weather, pit stops, and
-            laps led (2023–2024 seasons).
-          </p>
+          <p className="mt-2 max-w-2xl text-sm text-white/65">Who&apos;s making the podium?</p>
         </div>
       </header>
 
@@ -176,7 +173,7 @@ export default function App() {
         <div className="mb-8">
           <label
             htmlFor="race-select"
-            className="mb-2 block text-xs font-medium uppercase tracking-wide text-white/50"
+            className="mb-3 block border-l-2 border-l-[#e10600] pl-2 text-[0.65rem] font-semibold uppercase tracking-[0.15em] text-[#666]"
           >
             Race
           </label>
